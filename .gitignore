@@ -2,4 +2,7 @@
 test.py
 
 # Build files
-__pycache__/
+listcord/__pycache__/
+build/
+dist/
+listcord.py.egg-info/
