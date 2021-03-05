@@ -68,25 +68,33 @@ class Client():
         async with aiohttp.ClientSession() as session:
             async with session.get(self.baseURL + '/bots', params={ 'q': q }, headers={ 'token': self.token }) as result:
                 return await result.json()
-
+                
     def get_pack(self , id : str):
-        result = requests.get(self.baseURL + '/pack/' + id , headers = {'Authorization' : self.token})
+        result = requests.get(f"{self.baseURL}/pack/{id}" , headers = {'Authorization' : self.token})
         return result.json()
         
     async def get_pack_async(self, id : str):
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.baseURL + '/pack/' + id , headers = {'Authorization' : self.token}) as result:
+            async with session.get(f"{self.baseURL}/pack/{id}" , headers = {'Authorization' : self.token}) as result:
                 return await result.json()
                 
     def get_packs(self):
-        result = requests.get(self.baseURL + '/packs' , headers = {'Authorization' : self.token})
+        result = requests.get(f"{self.baseURL}/packs", headers = {'Authorization' : self.token})
         return result.json()
     
     async def get_packs_async(self):
         async with aiohttp.ClientSession() as session:
-            async with session.get(self.baseURL + '/packs', headers = {'Authorization' : self.token}) as result:
-                return await result.json()    
+            async with session.get(f"{self.baseURL}/packs", headers = {'Authorization' : self.token}) as result:
+                return await result.json()
 
+    def post_stats(self, id: str , count: int):
+        result = requests.post(f"{self.baseURL}/bot/{id}/stats" , headers = {'Authorization' : self.token} , json = {'server_count' : count})
+        return result.json()
+              
+    async def post_stats_async(self, id :str , count: int):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.baseURL}/bot/{id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count' : count}) as result:
+                return await result.json()        
 
     def __str__(self):
         return 'Listcord<Client>'
