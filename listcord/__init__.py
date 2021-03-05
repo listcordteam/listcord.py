@@ -69,6 +69,25 @@ class Client():
             async with session.get(self.baseURL + '/bots', params={ 'q': q }, headers={ 'token': self.token }) as result:
                 return await result.json()
 
+    def get_pack(self , id : str):
+        result = requests.get(self.baseURL + '/pack/' + id , headers = {'Authorization' : self.token})
+        return result.json()
+        
+    async def get_pack_async(self, id : str):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.baseURL + '/pack/' + id , headers = {'Authorization' : self.token}) as result:
+                return await result.json()
+                
+    def get_packs(self):
+        result = requests.get(self.baseURL + '/packs' , headers = {'Authorization' : self.token})
+        return result.json()
+    
+    async def get_packs_async(self):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(self.baseURL + '/packs', headers = {'Authorization' : self.token}) as result:
+                return await result.json()    
+
+
     def __str__(self):
         return 'Listcord<Client>'
 
