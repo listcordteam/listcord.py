@@ -69,6 +69,15 @@ class Client():
             async with session.get(self.baseURL + '/bots', params={ 'q': q }, headers={ 'token': self.token }) as result:
                 return await result.json()
 
+    def post_stats(self, id: str , count: int):
+        result = requests.post(self.baseURL + '/bot/' + id + '/stats' , headers = {'Authorization' : self.token} , data = {'server_count' : count})
+        return result.json()
+              
+    async def post_stats_async(self, id :str , count: int):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(self.baseURL + '/bot/' + id + '/stats' , headers = {'Authorization' : self.token}, data = {'server_count' : count}) as result:
+                return await result.json()        
+
     def __str__(self):
         return 'Listcord<Client>'
 
