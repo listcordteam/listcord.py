@@ -57,6 +57,15 @@ await client.has_voted_async('user id', 'bot id'); # Verify if the particular us
 
 client.search('shaz'); # Returns the array of the bots which matches your query!
 await client.search_async('shaz'); # Returns the array of the bots which matches your query aynchronously!
+
+client.get_pack('packid'); # Returns the pack which mathces your query!
+await client.get_pack_async('packid'); # Returns the pack which matches your query asynchronously!
+
+client.get_packs(); # Returns array of the packs!
+await client.get_packs_async('packid'); # Returns the array of the packs asynchronously!
+
+client.post_stats(bot_id , server_count); # Posts the server count of the bot to API!
+await client.post_stats_async(bot_id , server_count); # Posts the server count of the bot to API asynchronously!
 ```
 
 ## Contact
