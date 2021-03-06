@@ -9,7 +9,7 @@ class Client():
     token: str
     baseURL: str
     
-    def __init__(self, bot: discord.Client, token: str):
+    def __init__(self, token: str , bot : discord.Client = None):
         self.bot = bot
         self.token = token
         self.baseURL = 'https://listcord.xyz/api'
