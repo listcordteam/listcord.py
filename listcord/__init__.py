@@ -2,13 +2,15 @@ from typing import Coroutine, List, Union
 from .structs import Botpack, Botpacks, PostResponse, Response, Bot, Review, VoteData
 import requests
 import aiohttp
+import discord
 
 class Client():
 
     token: str
     baseURL: str
     
-    def __init__(self, token: str):
+    def __init__(self, bot: discord.Client, token: str):
+        self.bot = bot
         self.token = token
         self.baseURL = 'https://listcord.xyz/api'
     
@@ -81,14 +83,23 @@ class Client():
             async with session.get(f"{self.baseURL}/packs", headers = {'Authorization' : self.token}) as result:
                 return await result.json()
 
-    def post_stats(self, id: str, count: int) -> PostResponse:
-        result = requests.post(f"{self.baseURL}/bot/{id}/stats" , headers = {'Authorization' : self.token} , json = {'server_count' : count})
+    def post_stats(self, count: int) -> PostResponse:
+        result = requests.post(f"{self.baseURL}/bot/{self.bot.user.id}/stats" , headers = {'Authorization' : self.token} , json = {'server_count' : count})
         return result.json()
               
-    async def post_stats_async(self, id: str, count: int) -> Coroutine[None, None, PostResponse]:
+    async def post_stats_async(self, count: int) -> Coroutine[None, None, PostResponse]:
         async with aiohttp.ClientSession() as session:
-            async with session.post(f"{self.baseURL}/bot/{id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count' : count}) as result:
-                return await result.json()        
+            async with session.post(f"{self.baseURL}/bot/{self.bot.user.id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count' : count}) as result:
+                return await result.json()
+                
+    def auto_post_stats(self , interval:int = 30):
+        self.bot.loop.create_task(self.auto_post(interval))
+
+    async def auto_post(self, interval):
+        await self.bot.wait_until_ready()
+        while not self.bot.is_closed():
+            await self.post_stats_async(len(self.bot.guilds))
+            await asyncio.sleep(interval * 60)
 
     def __str__(self):
         return 'Listcord<Client>'
