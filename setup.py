@@ -8,7 +8,7 @@ def readme():
 setup(
     name="listcord.py",
     url="https://github.com/listcordteam/listcord.py",
-    version="1.5.0",
+    version="2.1.0",
     description="Simple listcord api wrapper for python!",
     long_description=readme(),
     long_description_content_type="text/markdown",
