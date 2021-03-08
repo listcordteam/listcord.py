@@ -1,5 +1,6 @@
 from typing import Coroutine, List, Union
 from .structs import Botpack, Botpacks, PostResponse, Response, Bot, Review, VoteData
+from .autoposter import AutoPoster
 import requests
 import aiohttp
 
@@ -11,6 +12,7 @@ class Client():
     def __init__(self, token: str):
         self.token = token
         self.baseURL = 'https://listcord.xyz/api'
+        self.create_auto_poster = AutoPoster
     
     def get_bot(self, id: str) -> Response[Bot]:
         data = requests.get(f"{self.baseURL}/bot/{id}", headers={ 'Authorization': self.token })
@@ -88,7 +90,7 @@ class Client():
     async def post_stats_async(self, id: str, count: int) -> Coroutine[None, None, PostResponse]:
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{self.baseURL}/bot/{id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count' : count}) as result:
-                return await result.json()        
+                return await result.json()    
 
     def __str__(self):
         return 'Listcord<Client>'

@@ -20,6 +20,8 @@ class Bot(TypedDict):
     submitted_at: int
     approved: bool
     servers: int
+    certified: bool
+    vanity: Union[str, None]
 
 class Review(TypedDict):
 

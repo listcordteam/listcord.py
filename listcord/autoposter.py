@@ -1,18 +1,66 @@
-import Client from listcord
-import discord
-import asyncio
+from typing import Callable, Mapping, TypedDict
+import asyncio, aiohttp, discord
 
-class AutoPost():
-    def __init__(self,token: str, bot:discord.Client):
+class Options(TypedDict):
+
+    interval: int
+    start: bool
+
+class AutoPoster():
+
+    token: str
+    interval: int
+    bot: discord.Client
+    stopped: bool
+    _events: Mapping[str, Callable]
+
+    def __init__(self, token: str, bot: discord.Client, options: Options = {
+        'interval': 900000,
+        'start': True
+    }):
         self.token = token
         self.bot = bot
-        self.client = Client(self.token)
-        
-    def start(self , interval:int = 30):
-        self.bot.loop.create_task(self.auto_post(interval))
 
-    async def auto_post(self, interval):
-        await self.bot.wait_until_ready()
-        while not self.bot.is_closed():
-            await self.client.post_stats_async(self.bot.user.id, len(self.bot.guilds))
-            await asyncio.sleep(interval * 60)
+        if 'interval' not in options: options['interval'] = 900000
+        else:
+            if not isinstance(options['interval'], int) or options['interval'] < 900000: raise TypeError('Invalid interval duration!')
+
+        if 'start' not in options: options['start'] = True
+
+        self.interval = options['interval']
+        self.stopped = not options['start']
+
+        def on_post() -> None:
+            return None
+
+        def on_error() -> None:
+            return None
+
+        self._events = {
+            'post': on_post,
+            'error': on_error
+        }
+    
+    def on(self, event: str) -> Callable[[Callable], None]:
+        def add_listener(callback: Callable):
+            self._events[event] = callback
+        
+        return add_listener
+
+    def emit(self, event: str, data):
+        if event in self._events: self._events[event](data)
+
+    async def init(self):
+        while not self.stopped:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(f"https://listcord.xyz/api/bot/{id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count': len(self.bot.guilds)}) as result:
+                    if result.status != 200: self.emit('error', await result.json())
+                    else: self.emit('post', await result.json())
+
+            await asyncio.sleep(self.interval)
+
+    def start(self):
+        self.stopped = False
+
+    def stop(self):
+        self.stopped = True
