@@ -30,10 +30,10 @@ class AutoPoster():
         self.interval = options['interval']
         self.stopped = not options['start']
 
-        def on_post() -> None:
+        def on_post(self) -> None:
             return None
 
-        def on_error() -> None:
+        def on_error(self) -> None:
             return None
 
         self._events = {
@@ -53,7 +53,7 @@ class AutoPoster():
     async def init(self):
         while not self.stopped:
             async with aiohttp.ClientSession() as session:
-                async with session.post(f"https://listcord.xyz/api/bot/{id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count': len(self.bot.guilds)}) as result:
+                async with session.post(f"https://listcord.xyz/api/bot/{self.bot.user.id}/stats" , headers = {'Authorization' : self.token}, json = {'server_count': len(self.bot.guilds)}) as result:
                     if result.status != 200: self.emit('error', await result.json())
                     else: self.emit('post', await result.json())
 
