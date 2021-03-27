@@ -11,7 +11,7 @@ class Client():
     
     def __init__(self, token: str):
         self.token = token
-        self.baseURL = 'https://listcord.xyz/api'
+        self.baseURL = 'https://listcord.gg/api'
         self.create_auto_poster = AutoPoster
     
     def get_bot(self, id: str) -> Response[Bot]:
