@@ -95,4 +95,4 @@ class Client():
     def __str__(self):
         return 'Listcord<Client>'
 
-__version__ = '2.1.0'
+__version__ = '1.6.0'
